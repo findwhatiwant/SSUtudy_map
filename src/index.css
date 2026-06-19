@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Pretendard', 'Noto Sans KR', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 마크다운(.md) 본문 렌더링 스타일 — Tailwind base가 제거한 기본 서식 복원 */
+.study-body p {
+  margin: 0 0 0.5rem;
+}
+.study-body ul {
+  margin: 0 0 0.5rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+.study-body li {
+  margin: 0.15rem 0;
+}
+.study-body strong {
+  font-weight: 600;
+  color: #1e293b;
+}
+.study-body blockquote {
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.75rem;
+  border-left: 3px solid #cbd5e1;
+  color: #64748b;
+}
+.study-body a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
