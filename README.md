@@ -60,4 +60,4 @@ npm run preview   # 빌드 결과 미리보기
 
 `main` 브랜치 푸시 시 `.github/workflows/deploy.yml` 가 GitHub Pages로 자동 배포합니다.
 저장소 Settings > Secrets 에 `VITE_KAKAO_MAP_KEY` 를 등록하세요.
-`vite.config.ts` 의 `base` 는 저장소 이름(`/SSU_study_map/`)에 맞춰져 있습니다.
+`vite.config.ts` 의 `base` 는 저장소 이름(`/SSUtudy_map/`)에 맞춰져 있습니다.

@@ -5,5 +5,5 @@ import react from '@vitejs/plugin-react'
 // base를 저장소 이름에 맞춘다. (사용자/조직 페이지면 '/'로 변경)
 export default defineConfig({
   plugins: [react()],
-  base: '/SSU_study_map/',
+  base: '/SSUtudy_map/',
 })
