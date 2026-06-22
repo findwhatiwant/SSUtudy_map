@@ -14,6 +14,11 @@ declare global {
         constructor(lat: number, lng: number)
       }
 
+      class LatLngBounds {
+        constructor()
+        extend(latlng: LatLng): void
+      }
+
       interface MapOptions {
         center: LatLng
         level: number
@@ -22,6 +27,7 @@ declare global {
       class Map {
         constructor(container: HTMLElement, options: MapOptions)
         setCenter(latlng: LatLng): void
+        setBounds(bounds: LatLngBounds): void
         relayout(): void
       }
 

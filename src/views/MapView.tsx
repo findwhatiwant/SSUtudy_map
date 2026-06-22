@@ -27,6 +27,8 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const markersRef = useRef<kakao.maps.Marker[]>([])
   const [mapError, setMapError] = useState<string | null>(null)
+  // 지도 SDK 로드 + 인스턴스 생성이 끝났는지. 마커는 이 값이 true가 된 뒤에 그린다.
+  const [mapReady, setMapReady] = useState(false)
 
   // 지도 초기화 (1회)
   useEffect(() => {
@@ -42,6 +44,7 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
           center: new window.kakao.maps.LatLng(CAMPUS_CENTER.lat, CAMPUS_CENTER.lng),
           level: 3,
         })
+        setMapReady(true)
       })
       .catch((e: unknown) => {
         if (!disposed) setMapError(e instanceof Error ? e.message : '지도를 불러오지 못했습니다.')
@@ -51,30 +54,39 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
     }
   }, [])
 
-  // 마커 렌더링 (spaces 변경 시)
+  // 마커 렌더링 (지도 준비 완료 후 / spaces 변경 시)
   useEffect(() => {
     const map = mapRef.current
-    if (!map) return
+    if (!mapReady || !map) return
 
     markersRef.current.forEach((m) => m.setMap(null))
     markersRef.current = []
 
+    const bounds = new window.kakao.maps.LatLngBounds()
+
     spaces.forEach((space) => {
+      const position = new window.kakao.maps.LatLng(space.lat, space.lng)
       const image = new window.kakao.maps.MarkerImage(
         pinImageSrc(STATUS_COLOR[space.status]),
         new window.kakao.maps.Size(34, 44),
         { offset: new window.kakao.maps.Point(17, 44) },
       )
       const marker = new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(space.lat, space.lng),
+        position,
         map,
         title: space.name,
         image,
       })
       window.kakao.maps.event.addListener(marker, 'click', () => onSelect(space.id))
       markersRef.current.push(marker)
+      bounds.extend(position)
     })
-  }, [spaces, onSelect])
+
+    // 6곳이 모두 화면에 들어오도록 지도 범위를 맞춘다.
+    if (spaces.length > 0) {
+      map.setBounds(bounds)
+    }
+  }, [mapReady, spaces, onSelect])
 
   if (mapError) {
     return <MapFallback spaces={spaces} onSelect={onSelect} reason={mapError} />
