@@ -80,7 +80,9 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
     return <MapFallback spaces={spaces} onSelect={onSelect} reason={mapError} />
   }
 
-  return <div ref={containerRef} className="h-full w-full" />
+  // touch-none: 브라우저가 터치 드래그를 스크롤 제스처로 가로채지 않도록 하여
+  // 카카오맵의 터치 패닝(드래그 이동)이 모바일에서도 정상 동작하게 한다.
+  return <div ref={containerRef} className="h-full w-full touch-none" />
 }
 
 // 키가 없거나 지도 로드 실패 시: 핀 클릭 기능은 유지하는 목록형 대체 화면
