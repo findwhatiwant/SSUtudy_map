@@ -12,6 +12,9 @@ export interface StudyMapState {
   error: string | null
   selectSpace: (id: string) => void
   closeDetail: () => void
+  isReportOpen: boolean
+  openReport: () => void
+  closeReport: () => void
 }
 
 export function useStudyMapPresenter(): StudyMapState {
@@ -19,6 +22,7 @@ export function useStudyMapPresenter(): StudyMapState {
   const [selected, setSelected] = useState<StudySpace | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isReportOpen, setIsReportOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -46,5 +50,18 @@ export function useStudyMapPresenter(): StudyMapState {
 
   const closeDetail = useCallback(() => setSelected(null), [])
 
-  return { spaces, selected, loading, error, selectSpace, closeDetail }
+  const openReport = useCallback(() => setIsReportOpen(true), [])
+  const closeReport = useCallback(() => setIsReportOpen(false), [])
+
+  return {
+    spaces,
+    selected,
+    loading,
+    error,
+    selectSpace,
+    closeDetail,
+    isReportOpen,
+    openReport,
+    closeReport,
+  }
 }
