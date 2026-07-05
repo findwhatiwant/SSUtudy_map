@@ -31,7 +31,7 @@ function toStudySpace(raw: string): StudySpace {
     groupStudy: data.groupStudy === true,
     status: (String(data.status ?? 'open') as StudySpaceStatus) || 'open',
     statusNote: data.statusNote ? String(data.statusNote) : '',
-    bodyHtml: marked.parseSync(body),
+    bodyHtml: marked.parse(body) as string,
   }
 }
 
