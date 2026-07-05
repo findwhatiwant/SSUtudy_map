@@ -15,8 +15,32 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
   const [hours, setHours] = useState('')
   const [description, setDescription] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [startY, setStartY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
 
   if (!isOpen) return null
+
+  const handleStart = (clientY: number) => {
+    setStartY(clientY)
+    setIsDragging(true)
+  }
+
+  const handleMove = (clientY: number) => {
+    if (!isDragging) return
+    const deltaY = clientY - startY
+    if (deltaY > 0) {
+      setDragOffset(deltaY)
+    }
+  }
+
+  const handleEnd = () => {
+    setIsDragging(false)
+    if (dragOffset > 100) {
+      handleResetAndClose()
+    }
+    setDragOffset(0)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,6 +69,7 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
     setHours('')
     setDescription('')
     setSubmitted(false)
+    setDragOffset(0)
     onClose()
   }
 
@@ -54,11 +79,26 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
       onClick={handleResetAndClose}
     >
       <div
-        className="relative w-full max-w-md rounded-t-3xl bg-white p-6 pb-8 shadow-2xl transition-transform duration-300 max-h-[90dvh] overflow-y-auto"
+        className="relative w-full max-w-md rounded-t-3xl bg-white px-6 pb-8 shadow-2xl max-h-[90dvh] overflow-y-auto"
+        style={{
+          transform: `translateY(${dragOffset}px)`,
+          transition: isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 드래그 핸들 디자인 바 */}
-        <div className="mx-auto mb-5 h-1 w-12 rounded-full bg-slate-200" />
+        {/* 드래그 핸들 디자인 영역 */}
+        <div
+          onTouchStart={(e) => handleStart(e.touches[0].clientY)}
+          onTouchMove={(e) => handleMove(e.touches[0].clientY)}
+          onTouchEnd={handleEnd}
+          onMouseDown={(e) => handleStart(e.clientY)}
+          onMouseMove={(e) => { if (isDragging) handleMove(e.clientY); }}
+          onMouseUp={handleEnd}
+          onMouseLeave={handleEnd}
+          className="w-full cursor-grab active:cursor-grabbing pb-3 pt-2 select-none flex flex-col items-center touch-none"
+        >
+          <div className="h-1.5 w-12 rounded-full bg-slate-200 hover:bg-slate-300 transition-colors" />
+        </div>
 
         {submitted ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">

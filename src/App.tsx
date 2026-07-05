@@ -46,7 +46,7 @@ export default function App() {
             <MapView spaces={spaces} onSelect={selectSpace} />
             <button
               onClick={openReport}
-              className="absolute bottom-6 left-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 outline-none hover:bg-blue-700 active:scale-95 transition-all duration-200"
+              className="absolute bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 outline-none hover:bg-blue-700 active:scale-95 transition-all duration-200"
               title="공부 공간 제보하기"
             >
               <svg
