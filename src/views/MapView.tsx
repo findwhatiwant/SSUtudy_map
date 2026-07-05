@@ -26,6 +26,7 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const markersRef = useRef<kakao.maps.Marker[]>([])
+  const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null)
   const [mapError, setMapError] = useState<string | null>(null)
   // 지도 SDK 로드 + 인스턴스 생성이 끝났는지. 마커는 이 값이 true가 된 뒤에 그린다.
   const [mapReady, setMapReady] = useState(false)
@@ -59,10 +60,17 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
     const map = mapRef.current
     if (!mapReady || !map) return
 
-    markersRef.current.forEach((m) => m.setMap(null))
-    markersRef.current = []
+    // 클러스터러 초기화
+    if (!clustererRef.current) {
+      clustererRef.current = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 4, // 지도 축소 레벨 4 이상일 때만 클러스터링 적용
+      })
+    }
 
     const bounds = new window.kakao.maps.LatLngBounds()
+    const newMarkers: kakao.maps.Marker[] = []
 
     spaces.forEach((space) => {
       const position = new window.kakao.maps.LatLng(space.lat, space.lng)
@@ -71,20 +79,30 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
         new window.kakao.maps.Size(34, 44),
         { offset: new window.kakao.maps.Point(17, 44) },
       )
+      // 클러스터러가 직접 마커를 그려주므로 map 매개변수는 생략합니다.
       const marker = new window.kakao.maps.Marker({
         position,
-        map,
         title: space.name,
         image,
       })
       window.kakao.maps.event.addListener(marker, 'click', () => onSelect(space.id))
-      markersRef.current.push(marker)
+      newMarkers.push(marker)
       bounds.extend(position)
     })
+
+    markersRef.current = newMarkers
+    clustererRef.current.addMarkers(newMarkers)
 
     // 6곳이 모두 화면에 들어오도록 지도 범위를 맞춘다.
     if (spaces.length > 0) {
       map.setBounds(bounds)
+    }
+
+    return () => {
+      if (clustererRef.current) {
+        clustererRef.current.clear()
+      }
+      markersRef.current = []
     }
   }, [mapReady, spaces, onSelect])
 

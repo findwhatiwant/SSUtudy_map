@@ -21,23 +21,73 @@ SSUtudy Map
 
 - **빌드/언어**: Vite + React + TypeScript — 가볍고 빠른 모바일 SPA, 마커 클릭/팝업 상태 관리에 적합
 - **스타일**: Tailwind CSS — 모바일 반응형·터치 UI 빠르게 구성
-- **지도**: 카카오맵 (JS SDK 또는 Static Image API) — 국내 데이터 정확, 무료 티어, 가벼운 인터랙션에 적합
-- **상태관리**: React useState/Context (필요 시 Zustand)
-- **데이터**: `public/`의 정적 JSON (백엔드 없이 공부 공간·마커 정보 포함)
-- **배포**: Vercel 또는 Netlify — 정적 호스팅, 자동 배포
+- **지도**: 카카오맵 JS SDK (마커 클러스터러 라이브러리 사용) — 국내 데이터 정확, 무료 티어 제공
+- **상태관리**: React useState / React Callback Hook / Presenter Hook
+- **데이터**: `src/content/spaces/` 내의 개별 `.md` 마크다운 파일 (프론트매터 파싱 및 Marked 기반 HTML 변환)
+- **배포**: GitHub Pages (GitHub Actions를 통한 `main` 브랜치 자동 빌드 및 배포)
 - **추가**: PWA (홈 화면 추가)로 모바일 웹 사용성 향상
 
 # 시스템 구조
 
-데이터베이스가 없는 형태이지만 MVP 디자인패턴을 최대한 지향한다.
+백엔드가 없는 정적 클라이언트 단일 애플리케이션으로, 코드의 관심사 분리를 위해 MVP 디자인패턴을 지향한다.
+- **Model**: [studySpace.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpace.ts), [frontmatter.ts](file:///Users/jousig/programming/SSU_study_map/src/models/frontmatter.ts), [studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts) (데이터 구조 정의 및 마크다운 정적 파싱)
+- **Presenter**: [useStudyMapPresenter.ts](file:///Users/jousig/programming/SSU_study_map/src/presenters/useStudyMapPresenter.ts) (동작 관리 및 로직 캡슐화)
+- **View**: [MapView.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/MapView.tsx), [StudySpaceModal.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/StudySpaceModal.tsx), [ReportSpaceModal.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/ReportSpaceModal.tsx) (UI 표출)
 
 # UI 화면 구성
 
+- **헤더**: 스터디 스팟 앱 제목 및 전체 공간 개수 노출
+- **지도 뷰 (MapView)**: 숭실대학교 캠퍼스 지도를 바탕으로, 카카오맵 API 연동. 지도 축소(레벨 4 이상) 시 핀 마커 클러스터링 표출.
+- **상세 정보 모달 (StudySpaceModal)**: 핀 선택 시 하단 바텀 시트로 올라오며, 상세 속성(좌석 수, 콘센트, 그룹 스터디, 운영 시간)과 마크다운 렌더링된 본문 HTML 표출.
+- **공간 제보 모달 (ReportSpaceModal)**: 우하단 플로팅 버튼 클릭 시 올라오는 입력 폼. 제스처(스와이프/드래그 다운)를 통한 닫기 지원.
+- **대체 리스트 뷰 (MapFallback)**: 카카오맵 SDK 로드 실패 시 나타나는 백업 리스트. 핀 선택 기능은 동일하게 작동.
+
 # 데이터 모델
+
+### StudySpace 인터페이스
+- `id: string` : 고유 식별자
+- `name: string` : 공간명
+- `category: string` : 카테고리 (도서관, 열람실, 로비/쉼터, 카페, 기타)
+- `building: string` : 소속 건물명
+- `lat: number` : 위도
+- `lng: number` : 경도
+- `seats: number` : 총 좌석 수
+- `hours: string` : 이용 가능 시간
+- `outlets: boolean` : 콘센트 유무
+- `groupStudy: boolean` : 그룹 스터디 가능 여부
+- `status: 'open' | 'closed' | 'crowded'` : 혼잡도/이용상태
+- `statusNote: string` : 상태 관련 안내문구
+- `bodyHtml: string` : 마크다운에서 변환된 설명 영역 HTML
 
 # API 설계
 
-# 일정 및 마일스톤
+### 클라이언트 사이드 데이터 정적 로딩
+- `import.meta.glob('../content/spaces/*.md', { query: '?raw', eager: true })` 방식을 통해 정적 빌드타입에 모든 마크다운 파일을 로드하여 `fetchStudySpaces` API를 통해 Promise 형태로 반환.
+
+# 일정 및 마일스톤 (개발 현황 및 해야할 일)
+
+### 1단계: MVP 개발 및 기능 구현 (완료)
+- [x] 프로젝트 초기 환경 설정 및 기본 뼈대 구성
+- [x] 마크다운 기반 공간 데이터 추가 및 파서 구현
+- [x] 카카오맵 SDK 연동 및 공간별 커스텀 마커(상태별 색상 분기) 표출
+- [x] 마커 클러스터러 도입 (지도 축소 시 자동 그룹화 적용)
+- [x] 공간 선택 시 하단 상세 바텀 시트 연동 (Marked 렌더링)
+- [x] 모바일 스와이프 제스처가 적용된 공간 제보 폼 모달 개발
+- [x] GitHub Pages 빌드 및 배포 자동화 파이프라인 구성
+
+### 2단계: 최적화 및 릴리즈 준비 (진행 중)
+- [ ] **API 비용 추적 및 사용량 모니터링 (보완 필요)**
+  - 카카오 디벨로퍼스 일일 제한 쿼터(지도 호출 30만 건, 로컬 API 10만 건) 모니터링 및 알림 설정
+  - 비즈월렛 연동 정책 및 단일 무료 앱 쿼터 활성화 여부 주기적 체크
+- [ ] **보안 관리 강화 (보완 필요)**
+  - 카카오 JavaScript 키가 브라우저 상에 노출되므로, 카카오 개발자 콘솔의 **Web 플랫폼 도메인 화이트리스트** 설정을 엄격히 관리 (`localhost`, github.io 배포 도메인만 허용)
+  - 주기적인 API 키 이상 트래픽 관리 및 GitHub Secrets 관리 강화
+- [ ] **제보 데이터 전송 기능 연동**
+  - 현재 콘솔 로그만 남기는 제보 모달 폼에 이메일 API(EmailJS 등) 또는 경량 서버리스 DB(Formspree, Supabase 등)를 붙여 실제 전송 가능하도록 수정
+- [ ] **방문자 수 측정 기능 구현**
+  - 사용자 수 목표(200명) 도달을 추적하기 위한 Google Analytics(GA4) 또는 카카오 픽셀/Vercel Analytics 연동
+- [ ] **PWA (Progressive Web App) 도입**
+  - 모바일 홈 화면 바로가기 추가 및 오프라인에서도 기본 정보 확인이 가능하도록 캐싱 설정 추가
 
 # 배포 및 운영
 

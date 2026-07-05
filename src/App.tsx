@@ -23,7 +23,7 @@ export default function App() {
       <header className="z-10 flex items-center justify-between bg-blue-700 px-4 py-3 text-white shadow">
         <div>
           <h1 className="text-base font-bold leading-tight">스터디 스팟</h1>
-          <p className="text-xs text-blue-100">숭실대 공부 공간 지도</p>
+          <p className="text-xs text-blue-100">모두의 공부 공간 지도</p>
         </div>
         <span className="rounded-full bg-blue-600 px-3 py-1 text-xs">
           {spaces.length}곳

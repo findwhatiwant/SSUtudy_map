@@ -59,6 +59,31 @@ declare global {
         setMap(map: Map | null): void
       }
 
+      interface MarkerClustererOptions {
+        map?: Map
+        markers?: Marker[]
+        gridSize?: number
+        averageCenter?: boolean
+        minLevel?: number
+        minClusterSize?: number
+        styles?: object[]
+        texts?: string[] | ((size: number) => string)
+        calculator?: number[] | ((size: number) => number[])
+        disableClickZoom?: boolean
+        clickable?: boolean
+        hoverable?: boolean
+      }
+
+      class MarkerClusterer {
+        constructor(options: MarkerClustererOptions)
+        addMarkers(markers: Marker[], nodraw?: boolean): void
+        addMarker(marker: Marker, nodraw?: boolean): void
+        removeMarkers(markers: Marker[], nodraw?: boolean): void
+        removeMarker(marker: Marker, nodraw?: boolean): void
+        clear(): void
+        redraw(): void
+      }
+
       namespace event {
         function addListener(
           target: object,

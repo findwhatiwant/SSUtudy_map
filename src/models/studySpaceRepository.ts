@@ -19,19 +19,19 @@ marked.setOptions({ breaks: true })
 function toStudySpace(raw: string): StudySpace {
   const { data, body } = parseMarkdown(raw)
   return {
-    id: String(data.id),
-    name: String(data.name),
-    category: String(data.category),
-    building: String(data.building),
-    lat: Number(data.lat),
-    lng: Number(data.lng),
-    seats: Number(data.seats),
-    hours: String(data.hours),
+    id: String(data.id ?? ''),
+    name: String(data.name ?? '이름 없음'),
+    category: String(data.category ?? '기타'),
+    building: String(data.building ?? '미지정'),
+    lat: Number(data.lat ?? 0),
+    lng: Number(data.lng ?? 0),
+    seats: Number(data.seats ?? 0),
+    hours: String(data.hours ?? '정보 없음'),
     outlets: data.outlets === true,
     groupStudy: data.groupStudy === true,
-    status: String(data.status) as StudySpaceStatus,
+    status: (String(data.status ?? 'open') as StudySpaceStatus) || 'open',
     statusNote: data.statusNote ? String(data.statusNote) : '',
-    bodyHtml: marked.parse(body) as string,
+    bodyHtml: marked.parseSync(body),
   }
 }
 
