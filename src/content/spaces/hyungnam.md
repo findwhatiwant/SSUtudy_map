@@ -3,8 +3,8 @@ id: hyungnam
 name: 형남공학관 열람실
 category: 열람실
 building: 형남공학관
-lat: 37.49705
-lng: 126.95652
+lat: 37.49586
+lng: 126.95594
 seats: 220
 hours: 24시간 개방
 outlets: true

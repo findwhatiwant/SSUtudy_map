@@ -3,8 +3,8 @@ id: venture-center
 name: 벤처중소기업센터 열람실
 category: 열람실
 building: 벤처중소기업센터
-lat: 37.49658
-lng: 126.95886
+lat: 37.49756
+lng: 126.95742
 seats: 120
 hours: 평일 09:00 - 22:00
 outlets: true

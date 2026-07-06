@@ -3,8 +3,8 @@ id: central-library
 name: 중앙도서관 (구도서관)
 category: 도서관
 building: 중앙도서관
-lat: 37.49625
-lng: 126.95717
+lat: 37.49626
+lng: 126.95857
 seats: 800
 hours: 평일 07:00 - 23:00 / 주말 09:00 - 21:00
 outlets: true

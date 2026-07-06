@@ -3,8 +3,8 @@ id: jeonsan
 name: 전산관 스터디룸
 category: 스터디룸
 building: 전산관
-lat: 37.49781
-lng: 126.95738
+lat: 37.49547
+lng: 126.95934
 seats: 48
 hours: 평일 09:00 - 21:00
 outlets: true

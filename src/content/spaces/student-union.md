@@ -3,8 +3,8 @@ id: student-union
 name: 학생회관 휴게 라운지
 category: 라운지
 building: 학생회관
-lat: 37.49498
-lng: 126.95689
+lat: 37.49699
+lng: 126.95640
 seats: 90
 hours: 평일 08:00 - 23:00 / 주말 10:00 - 20:00
 outlets: false

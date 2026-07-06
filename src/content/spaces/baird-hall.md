@@ -3,8 +3,8 @@ id: baird-hall
 name: 베어드홀 라운지
 category: 라운지
 building: 베어드홀
-lat: 37.49562
-lng: 126.95802
+lat: 37.49645
+lng: 126.95632
 seats: 60
 hours: 평일 08:00 - 22:00
 outlets: true
