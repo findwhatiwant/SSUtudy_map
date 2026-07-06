@@ -12,6 +12,9 @@ const CAMPUS_CENTER = { lat: 37.49632, lng: 126.9577 }
 interface MapViewProps {
   spaces: StudySpace[]
   onSelect: (id: string) => void
+  isSelectingLocation?: boolean
+  tempLocation?: { lat: number; lng: number } | null
+  onMapClick?: (loc: { lat: number; lng: number }) => void
 }
 
 function pinImageSrc(color: string): string {
@@ -22,7 +25,13 @@ function pinImageSrc(color: string): string {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`
 }
 
-export function MapView({ spaces, onSelect }: MapViewProps) {
+export function MapView({
+  spaces,
+  onSelect,
+  isSelectingLocation = false,
+  tempLocation = null,
+  onMapClick,
+}: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const markersRef = useRef<kakao.maps.Marker[]>([])
@@ -105,6 +114,58 @@ export function MapView({ spaces, onSelect }: MapViewProps) {
       markersRef.current = []
     }
   }, [mapReady, spaces, onSelect])
+
+  // 지도 클릭하여 제보 위치 지정하는 이벤트 리스너 추가
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map || !isSelectingLocation) return
+
+    const handleMapClick = (mouseEvent: any) => {
+      const latlng = mouseEvent.latLng
+      if (onMapClick) {
+        onMapClick({ lat: latlng.getLat(), lng: latlng.getLng() })
+      }
+    }
+
+    window.kakao.maps.event.addListener(map, 'click', handleMapClick)
+    return () => {
+      window.kakao.maps.event.removeListener(map, 'click', handleMapClick)
+    }
+  }, [mapReady, isSelectingLocation, onMapClick])
+
+  // 선택용 임시 마커 관리
+  const selectMarkerRef = useRef<kakao.maps.Marker | null>(null)
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map) return
+
+    if (!isSelectingLocation || !tempLocation) {
+      if (selectMarkerRef.current) {
+        selectMarkerRef.current.setMap(null)
+        selectMarkerRef.current = null
+      }
+      return
+    }
+
+    const position = new window.kakao.maps.LatLng(tempLocation.lat, tempLocation.lng)
+    
+    if (selectMarkerRef.current) {
+      selectMarkerRef.current.setPosition(position)
+    } else {
+      const image = new window.kakao.maps.MarkerImage(
+        pinImageSrc('#2563eb'), // 파란색 선택 핀
+        new window.kakao.maps.Size(34, 44),
+        { offset: new window.kakao.maps.Point(17, 44) }
+      )
+      selectMarkerRef.current = new window.kakao.maps.Marker({
+        position,
+        map,
+        title: '선택한 위치',
+        image,
+      })
+    }
+  }, [mapReady, isSelectingLocation, tempLocation])
 
   if (mapError) {
     return <MapFallback spaces={spaces} onSelect={onSelect} reason={mapError} />

@@ -2,9 +2,15 @@ import { useState } from 'react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db, isFirebaseConfigured } from '../lib/firebase'
 
+import { useEffect } from 'react'
+
 interface ReportSpaceModalProps {
   isOpen: boolean
   onClose: () => void
+  isSelectingLocation: boolean
+  startLocationSelection: () => void
+  reportedLocation: { lat: number; lng: number } | null
+  clearReportedLocation: () => void
 }
 
 interface FormState {
@@ -16,6 +22,8 @@ interface FormState {
   groupStudy: boolean
   hours: string
   description: string
+  lat: string
+  lng: string
 }
 
 const INITIAL_FORM: FormState = {
@@ -27,9 +35,18 @@ const INITIAL_FORM: FormState = {
   groupStudy: false,
   hours: '',
   description: '',
+  lat: '',
+  lng: '',
 }
 
-export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
+export function ReportSpaceModal({
+  isOpen,
+  onClose,
+  isSelectingLocation,
+  startLocationSelection,
+  reportedLocation,
+  clearReportedLocation,
+}: ReportSpaceModalProps) {
   const [form, setForm] = useState<FormState>(INITIAL_FORM)
   const [submitted, setSubmitted] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
@@ -37,6 +54,17 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // 지도에서 핀 선택 시 form에 반영
+  useEffect(() => {
+    if (reportedLocation) {
+      setForm((prev) => ({
+        ...prev,
+        lat: String(reportedLocation.lat),
+        lng: String(reportedLocation.lng),
+      }))
+    }
+  }, [reportedLocation])
 
   if (!isOpen) return null
 
@@ -67,12 +95,18 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.lat || !form.lng) {
+      setError('지도를 통해 공간의 위치(좌표)를 지정해야 합니다.')
+      return
+    }
     setError(null)
     setSubmitting(true)
 
     const suggestionData = {
       ...form,
       seats: form.seats ? Number(form.seats) : 0,
+      lat: Number(form.lat),
+      lng: Number(form.lng),
       status: 'pending',
     }
 
@@ -103,18 +137,23 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
     setDragOffset(0)
     setError(null)
     setSubmitting(false)
+    clearReportedLocation()
     onClose()
   }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+      className={`fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm transition-all duration-300 ${
+        isSelectingLocation ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      }`}
       onClick={handleResetAndClose}
     >
       <div
-        className="relative w-full max-w-md rounded-t-3xl bg-white px-6 pb-8 shadow-2xl max-h-[90dvh] overflow-y-auto"
+        className={`relative w-full max-w-md rounded-t-3xl bg-white px-6 pb-8 shadow-2xl max-h-[90dvh] overflow-y-auto transition-transform duration-300 ${
+          isSelectingLocation ? 'translate-y-full' : 'translate-y-0'
+        }`}
         style={{
-          transform: `translateY(${dragOffset}px)`,
+          transform: isSelectingLocation ? 'translateY(100%)' : `translateY(${dragOffset}px)`,
           transition: isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -218,6 +257,41 @@ export function ReportSpaceModal({ isOpen, onClose }: ReportSpaceModalProps) {
                       <option value="카페">카페</option>
                       <option value="기타">기타</option>
                     </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                    공간 위치 (좌표) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 flex items-center justify-between">
+                      <span className="truncate text-slate-600">
+                        {form.lat && form.lng
+                          ? `📍 위도: ${Number(form.lat).toFixed(5)}, 경도: ${Number(form.lng).toFixed(5)}`
+                          : '위치 지정 버튼을 누른 뒤 지도를 탭하세요'}
+                      </span>
+                      {form.lat && form.lng && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleChange('lat', '')
+                            handleChange('lng', '')
+                            clearReportedLocation()
+                          }}
+                          className="text-xs text-red-500 font-semibold hover:underline shrink-0"
+                        >
+                          지우기
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={startLocationSelection}
+                      className="rounded-xl bg-slate-900 px-4 text-xs font-semibold text-white hover:bg-slate-800 active:scale-95 transition-all shrink-0"
+                    >
+                      위치 지정
+                    </button>
                   </div>
                 </div>
 

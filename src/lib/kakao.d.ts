@@ -57,6 +57,7 @@ declare global {
       class Marker {
         constructor(options: MarkerOptions)
         setMap(map: Map | null): void
+        setPosition(latlng: LatLng): void
       }
 
       interface MarkerClustererOptions {
@@ -88,7 +89,12 @@ declare global {
         function addListener(
           target: object,
           type: string,
-          handler: () => void,
+          handler: (...args: any[]) => void,
+        ): void
+        function removeListener(
+          target: object,
+          type: string,
+          handler: (...args: any[]) => void,
         ): void
       }
     }
