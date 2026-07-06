@@ -4,6 +4,7 @@ import { useStudyMapPresenter } from './presenters/useStudyMapPresenter'
 import { MapView } from './views/MapView'
 import { StudySpaceModal } from './views/StudySpaceModal'
 import { ReportSpaceModal } from './views/ReportSpaceModal'
+import { GoogleAd } from './views/GoogleAd'
 
 export default function App() {
   const {
@@ -113,6 +114,7 @@ export default function App() {
         reportedLocation={reportedLocation}
         clearReportedLocation={clearReportedLocation}
       />
+      {!isSelectingLocation && <GoogleAd />}
     </div>
   )
 }
