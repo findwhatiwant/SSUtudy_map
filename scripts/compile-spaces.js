@@ -41,6 +41,16 @@ function parseFirestoreValue(value) {
   return null
 }
 
+// 정확한 OSM 기반 숭실대 건물 핀 좌표 매핑 테이블 (오버라이드용)
+const CORRECT_COORDS = {
+  'baird-hall': { lat: 37.49645, lng: 126.95632 },       // 베어드홀
+  'venture-center': { lat: 37.49756, lng: 126.95742 },   // 벤처중소기업센터
+  'jeonsan': { lat: 37.49547, lng: 126.95934 },          // 전산관
+  'central-library': { lat: 37.49626, lng: 126.95857 },  // 중앙도서관
+  'student-union': { lat: 37.49699, lng: 126.95640 },    // 학생회관
+  'hyungnam': { lat: 37.49586, lng: 126.95594 }          // 형남공학관
+}
+
 const projectId = getProjectId()
 const outputDir = path.resolve('public')
 const outputPath = path.join(outputDir, 'spaces.json')
@@ -76,13 +86,22 @@ try {
       data[key] = parseFirestoreValue(val)
     }
 
+    // 데이터베이스의 잘못 정렬된 좌표를 정확한 건물 중심 좌표로 오버라이드
+    const isOverride = id in CORRECT_COORDS
+    const lat = isOverride ? CORRECT_COORDS[id].lat : Number(data.lat ?? 0)
+    const lng = isOverride ? CORRECT_COORDS[id].lng : Number(data.lng ?? 0)
+
+    if (isOverride) {
+      console.log(`📍 좌표 오버라이드 적용: ${id} -> lat: ${lat}, lng: ${lng}`)
+    }
+
     spaces.push({
       id: id,
       name: String(data.name ?? '이름 없음'),
       category: String(data.category ?? '기타'),
       building: String(data.building ?? '미지정'),
-      lat: Number(data.lat ?? 0),
-      lng: Number(data.lng ?? 0),
+      lat: lat,
+      lng: lng,
       seats: Number(data.seats ?? 0),
       hours: String(data.hours ?? '정보 없음'),
       outlets: data.outlets === true,
@@ -100,7 +119,6 @@ try {
   console.log(`Successfully compiled ${spaces.length} spaces from Firestore to public/spaces.json`)
 } catch (error) {
   console.error('Error fetching/compiling spaces from Firestore:', error)
-  // 빌드에 실패하더라도 빈 spaces.json 파일을 보장해 줍니다.
   if (!fs.existsSync(outputPath)) {
     fs.writeFileSync(outputPath, JSON.stringify([], null, 2), 'utf-8')
   }

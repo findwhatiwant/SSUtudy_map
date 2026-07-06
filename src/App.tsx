@@ -28,15 +28,17 @@ export default function App() {
 
   return (
     <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-slate-100">
-      <header className="z-10 flex items-center justify-between bg-blue-700 px-4 py-3 text-white shadow">
-        <div>
-          <h1 className="text-base font-bold leading-tight">스터디 스팟</h1>
-          <p className="text-xs text-blue-100">모두의 공부 공간 지도</p>
-        </div>
-        <span className="rounded-full bg-blue-600 px-3 py-1 text-xs">
-          {spaces.length}곳
-        </span>
-      </header>
+      {!isSelectingLocation && (
+        <header className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between bg-white/80 border border-white/20 px-4 py-3.5 text-slate-800 shadow-lg rounded-2xl backdrop-blur-md ring-1 ring-black/5">
+          <div>
+            <h1 className="text-base font-bold leading-tight text-slate-900">스터디 스팟</h1>
+            <p className="text-xs text-slate-500 mt-0.5">모두의 공부 공간 지도</p>
+          </div>
+          <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3.5 py-1 text-xs font-semibold text-slate-600">
+            {spaces.length}곳
+          </span>
+        </header>
+      )}
 
       <main className="relative flex-1">
         {loading && (
