@@ -7,3 +7,7 @@ dist-ssr
 .DS_Store
 *.log
 *.tsbuildinfo
+
+# Local admin scripts
+scripts/*.local.js
+scripts/*.local.mjs
