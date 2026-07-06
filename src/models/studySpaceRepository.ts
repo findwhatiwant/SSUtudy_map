@@ -10,9 +10,9 @@ import type { StudySpace, StudySpaceStatus } from './studySpace'
 marked.setOptions({ breaks: true })
 
 export async function fetchStudySpaces(): Promise<StudySpace[]> {
-  // 1. static spaces.json 가져오기 시도 (네트워크 읽기 비용 0원)
+  // 1. static spaces.json 가져오기 시도 (브라우저 캐싱 방지를 위해 캐시 버스터 적용)
   try {
-    const response = await fetch('./spaces.json')
+    const response = await fetch(`./spaces.json?t=${Date.now()}`)
     if (response.ok) {
       const spaces = await response.json() as StudySpace[]
       if (spaces && spaces.length > 0) {
