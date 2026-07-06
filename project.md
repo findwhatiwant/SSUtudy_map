@@ -61,8 +61,9 @@ SSUtudy Map
 
 # API 설계
 
-### 클라이언트 사이드 데이터 정적 로딩
-- `import.meta.glob('../content/spaces/*.md', { query: '?raw', eager: true })` 방식을 통해 정적 빌드타입에 모든 마크다운 파일을 로드하여 `fetchStudySpaces` API를 통해 Promise 형태로 반환.
+### 정적 빌드 컴파일 (Option 2) 및 런타임 페치
+- 빌드 타임에 Node.js 스크립트([compile-spaces.js](file:///Users/jousig/programming/SSU_study_map/scripts/compile-spaces.js))가 Firestore에서 승인된 스팟 데이터를 REST API로 조회하여 [spaces.json](file:///Users/jousig/programming/SSU_study_map/public/spaces.json) 파일로 컴파일합니다.
+- 런타임 클라이언트([studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts))는 이 `./spaces.json`을 단일 HTTP GET 요청으로 비동기 호출하여 로드함으로써 파이어베이스 데이터 읽기(Read) 비용을 0원으로 완벽히 예방합니다.
 
 # 일정 및 마일스톤 (개발 현황 및 해야할 일)
 
