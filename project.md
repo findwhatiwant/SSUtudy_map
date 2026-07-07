@@ -89,12 +89,13 @@ SSUtudy Map
 - [x] **캠퍼스 건물별 핀 엇갈림 좌표 정밀 복구 및 OSM 데이터 매핑 완료**
 - [x] **개인 로컬 제보 관리용 비공개 CLI 스크립트 개발 완료 (`suggestions-to-md.local.js`)**
 - [x] **Extended FAB 기반 제보 버튼 UI 스타일 고도화**
+- [x] **커스텀 도메인(studyspot.kro.kr) 연동 및 CNAME 배포 파이프라인 통합 완료**
 - [ ] **구글 애드센스 승인 완료 후 깃허브 Secrets 등록 및 활성화** (VITE_GOOGLE_AD_CLIENT, VITE_GOOGLE_AD_SLOT)
 - [ ] **API 비용 추적 및 사용량 모니터링**
   - 카카오 디벨로퍼스 일일 제한 쿼터(지도 호출 30만 건, 로컬 API 10만 건) 모니터링 및 알림 설정
   - 비즈월렛 연동 정책 및 단일 무료 앱 쿼터 활성화 여부 주기적 체크
 - [ ] **보안 관리 강화**
-  - 카카오 개발자 콘솔의 **Web 플랫폼 도메인 화이트리스트** 설정을 엄격히 관리 (`localhost`, github.io 배포 도메인만 허용)
+  - 카카오 개발자 콘솔의 **Web 플랫폼 도메인 화이트리스트** 설정을 엄격히 관리 (`localhost`, `studyspot.kro.kr` 허용)
   - 주기적인 API 키 이상 트래픽 관리 및 GitHub Secrets 관리 강화
 - [ ] **방문자 수 측정 기능 구현**
   - 사용자 수 목표(200명) 도달을 추적하기 위한 Google Analytics(GA4) 또는 카카오 픽셀/Vercel Analytics 연동
@@ -103,11 +104,12 @@ SSUtudy Map
 
 # 배포 및 운영
 
-깃허브 웹페이지 배포 (GitHub Pages)
+깃허브 웹페이지 배포 (GitHub Pages) + 개인 도메인 연동
 
-- 배포 URL: https://findwhatiwant.github.io/SSUtudy_map/
+- 배포 URL: https://studyspot.kro.kr/
 - `main` 브랜치 push 시 GitHub Actions(`.github/workflows`)가 빌드 후 자동 배포한다.
-- `vite.config.ts`의 `base`는 저장소 이름(`/SSUtudy_map/`)과 일치해야 한다.
+- 커스텀 도메인 연동을 위해 `vite.config.ts`의 `base`는 `'/'`로 설정한다.
+- 깃허브 액션 배포 시 커스텀 도메인이 유실되지 않도록 `public/CNAME` 파일에 주소를 기입하여 관리한다.
 - 카카오맵 JavaScript 키 및 파이어베이스/애드센스 설정 키는 코드에 넣지 않고 **GitHub Secrets**로 주입한다.
   - 로컬 개발은 `.env.local`(gitignore됨)에 키를 둔다.
   - Vite는 빌드 시점에 환경변수를 번들에 박으므로, **Secret을 바꾸면 반드시 재배포(워크플로우 수동 실행 등)**해야 반영된다.
@@ -166,3 +168,21 @@ SSUtudy Map
 ## 11. Extended FAB (플로팅 제보 버튼) 스타일 고도화
 - **기능**: 지도 우측 하단의 단순한 `+` 모양 원형 플로팅 액션 버튼을, 직관성을 높이고 클릭 유도율을 극대화하기 위해 `+ 제보하기` 형태의 확장형 플로팅 버튼(Extended FAB)으로 UI 스타일 개선.
 - **해결**: `App.tsx`에서 너비(Padding) 및 내부 레이아웃을 반응형에 알맞게 수정하고, 트랜지션 애니메이션 및 액티브 눌림 스케일을 정비하여 완성도 높은 모던 웹 디자인 확보.
+
+## 12. 커스텀 도메인 연동 및 DNS CNAME 지정을 통한 HTTPS(SSL) 해결
+- **문제**: 커스텀 도메인 `studyspot.o-r.kr` 연결 시 HTTPS 인증서가 제대로 발급되지 않아 주소창에 "주의 요함" 경고가 노출되고, 깃허브 Pages 설정에서 `Enforce HTTPS`가 비활성화 상태로 굳어지던 오류.
+- **원인**: `o-r.kr`은 무료 서브도메인을 할당하는 구조를 가지므로, 깃허브 Pages에서는 이를 루트(Apex)가 아닌 서브도메인으로 분류해 A 레코드(IP)가 아닌 CNAME 레코드로 깃허브 원본 주소(`findwhatiwant.github.io`)를 바라볼 것을 요구(`InvalidARecordError`).
+- **해결**: 도메인 관리 콘솔(`내도메인.한국`)에서 A 레코드를 지우고 CNAME 값으로 `findwhatiwant.github.io`를 올바르게 매핑(끝자리 마침표 `.` 누락 등 도메인 대행사의 입력 포맷 오류 교정)한 뒤 깃허브에서 `Enforce HTTPS`를 활성화하여 완벽한 SSL 적용 완료.
+
+## 13. 개편된 카카오 개발자 콘솔 플랫폼 도메인 승인(Mismatched) 복구
+- **문제**: 도메인 변경 후 브라우저가 카카오 SDK 스크립트 로드에 실패(HTTP 401)하며 지도가 목록형 대체 화면으로 깨지던 현상. 외부 서버 가상 Referer 요청 검사를 통해 카카오 API가 도메인을 거부하고 있음을 정밀 격리함.
+- **원인**: 카카오 개발자 콘솔의 대대적인 UI 개편으로 기존의 `[플랫폼] ➔ [Web]` 설정이 **`[앱 설정] ➔ [플랫폼 키] ➔ [JavaScript 키] ➔ [JavaScript SDK 도메인]`** 내부의 상세 페이지 안쪽으로 숨어 들어가면서 사용자가 엉뚱한 "제품 링크 관리" 등에 입력해 매칭을 통과하지 못함.
+- **해결**: 최신 UI 경로를 찾아 정확한 도메인 허용 처리를 유도하여 지도 API가 올바르게 작동하도록 연동 완료.
+
+## 14. 신규 커스텀 도메인 이관 및 CNAME 유실 방지 (studyspot.o-r.kr -> studyspot.kro.kr)
+- **문제**: 사용자가 도메인을 기존 `studyspot.o-r.kr`에서 신규 주소인 `studyspot.kro.kr`로 변경함에 따라 관련 설정 업데이트가 필요했음.
+- **해결**: 깃허브 액션 빌드 배포 시 커스텀 도메인 네임 바인딩이 초기화되지 않도록 `public/CNAME`의 값을 `studyspot.kro.kr`로 일괄 업데이트 완료.
+
+## 15. spaces.json 브라우저 캐싱으로 인한 지도 핀 미노출 대응
+- **문제**: 빌드 배포 시점에 일시적으로 비어있던 `spaces.json` 정적 파일을 브라우저가 강하게 캐싱하여, 이후 데이터가 채워진 새로운 배포본이 배포되었음에도 지도 화면에 마커가 아무것도 뜨지 않던 현상.
+- **해결**: `studySpaceRepository.ts` 파일의 fetch API 호출부에 타임스탬프 기반 캐시 버스터(`?t=${Date.now()}`)를 덧붙여 브라우저 로컬 캐시를 강제 바이패스하고 매번 신선한 데이터를 조회하도록 해결.
