@@ -1,0 +1,47 @@
+[
+  {
+    "id": "it-building-1f",
+    "name": "정보과학관 1층",
+    "category": "로비/쉼터",
+    "building": "정보과학관",
+    "lat": 37.49460399001629,
+    "lng": 126.95968645163364,
+    "seats": 30,
+    "hours": "~22:00",
+    "outlets": true,
+    "groupStudy": true,
+    "status": "open",
+    "statusNote": "",
+    "bodyHtml": ""
+  },
+  {
+    "id": "student-cafeteria",
+    "name": "학생식당",
+    "category": "기타",
+    "building": "학생회관 3층",
+    "lat": 37.49684202983068,
+    "lng": 126.95695990368495,
+    "seats": 400,
+    "hours": "16:00~23:00",
+    "outlets": true,
+    "groupStudy": true,
+    "status": "open",
+    "statusNote": "",
+    "bodyHtml": ""
+  },
+  {
+    "id": "hyungnam-hall",
+    "name": "형남홀",
+    "category": "열람실",
+    "building": "형남공학관 2층",
+    "lat": 37.49585055391437,
+    "lng": 126.95595968499144,
+    "seats": 220,
+    "hours": "06:00~23:00",
+    "outlets": true,
+    "groupStudy": true,
+    "status": "open",
+    "statusNote": "",
+    "bodyHtml": ""
+  }
+]
