@@ -90,6 +90,7 @@ SSUtudy Map
 - [x] **개인 로컬 제보 관리용 비공개 CLI 스크립트 개발 완료 (`suggestions-to-md.local.js`)**
 - [x] **Extended FAB 기반 제보 버튼 UI 스타일 고도화**
 - [x] **커스텀 도메인(studyspot.kro.kr) 연동 및 CNAME 배포 파이프라인 통합 완료**
+- [x] **Firestore spaces 컬렉션 제거 및 100% 단일 로컬 정적 JSON 파일 기반 아키텍처로 개편**
 - [ ] **구글 애드센스 승인 완료 후 깃허브 Secrets 등록 및 활성화** (VITE_GOOGLE_AD_CLIENT, VITE_GOOGLE_AD_SLOT)
 - [ ] **API 비용 추적 및 사용량 모니터링**
   - 카카오 디벨로퍼스 일일 제한 쿼터(지도 호출 30만 건, 로컬 API 10만 건) 모니터링 및 알림 설정
@@ -186,3 +187,11 @@ SSUtudy Map
 ## 15. spaces.json 브라우저 캐싱으로 인한 지도 핀 미노출 대응
 - **문제**: 빌드 배포 시점에 일시적으로 비어있던 `spaces.json` 정적 파일을 브라우저가 강하게 캐싱하여, 이후 데이터가 채워진 새로운 배포본이 배포되었음에도 지도 화면에 마커가 아무것도 뜨지 않던 현상.
 - **해결**: `studySpaceRepository.ts` 파일의 fetch API 호출부에 타임스탬프 기반 캐시 버스터(`?t=${Date.now()}`)를 덧붙여 브라우저 로컬 캐시를 강제 바이패스하고 매번 신선한 데이터를 조회하도록 해결.
+
+## 16. Firestore spaces 컬렉션 제거 및 단일 로컬 JSON 기반 정적 관리 아키텍처 개편
+- **문제**: 지도의 원본 공부 공간 데이터를 개별 마크다운 파일(.md)과 Firestore `spaces` 컬렉션 두 곳에서 중복 관리 및 마이그레이션하면서 관리 복잡도가 증가하고, 클라이언트 단에서 Firestore로 실시간 조회하는 코드로 인해 번들 크기와 데이터베이스 읽기 비용 부담이 남아 있었음.
+- **해결**:
+  - `src/content/spaces/*.md` 파일과 `migrate.js`, `frontmatter.ts` 파일을 전면 삭제하고 단일 정적 데이터 소스 파일인 [spaces.json](file:///Users/jousig/programming/SSU_study_map/src/content/spaces.json)으로 구조를 통합.
+  - local 검토기([suggestions-to-md.local.js](file:///Users/jousig/programming/SSU_study_map/scripts/suggestions-to-md.local.js))가 승인 시 md 파일 대신 `src/content/spaces.json`에 데이터를 직접 추가/갱신하도록 수정.
+  - [compile-spaces.js](file:///Users/jousig/programming/SSU_study_map/scripts/compile-spaces.js))에서 Firestore REST API를 호출해 spaces를 가져오는 코드 및 [studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts)의 Firestore spaces 조회 폴백 코드를 전면 제거하여 완전한 무비용/초경량 런타임 빌드 달성.
+
