@@ -30,21 +30,6 @@
     "bodyHtml": ""
   },
   {
-    "id": "kim-young-sam-library",
-    "name": "김영삼도서관",
-    "category": "도서관",
-    "building": "김영삼도서관",
-    "lat": 37.5071514,
-    "lng": 126.9514054,
-    "seats": 245,
-    "hours": "평일 09:00~22:00, 주말 09:00~17:00",
-    "outlets": true,
-    "groupStudy": true,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>매주 월요일 및 법정공휴일 휴관, 동작구통합도서관 예약 가능</p>\n"
-  },
-  {
     "id": "mirae-hall-1f",
     "name": "미래관 1층",
     "category": "열람실",
@@ -58,21 +43,6 @@
     "status": "open",
     "statusNote": "",
     "bodyHtml": ""
-  },
-  {
-    "id": "paik-dabang",
-    "name": "빽다방",
-    "category": "카페",
-    "building": "빽다방 숭실대점",
-    "lat": 37.496472,
-    "lng": 126.957262,
-    "seats": 0,
-    "hours": "평일 08:00~21:00, 주말 10:00~21:00",
-    "outlets": false,
-    "groupStudy": false,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>매장이 협소하여 장시간 카공 비추천</p>\n"
   },
   {
     "id": "soongdeok-hall",
@@ -223,36 +193,6 @@
     "status": "open",
     "statusNote": "",
     "bodyHtml": ""
-  },
-  {
-    "id": "kagongjok-study-cafe",
-    "name": "카공족",
-    "category": "열람실",
-    "building": "카공족 스터디카페",
-    "lat": 37.4964,
-    "lng": 126.9572,
-    "seats": 0,
-    "hours": "00:00~24:00",
-    "outlets": true,
-    "groupStudy": true,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>24시간 연중무휴, 개인 학습 및 카공족 최적화</p>\n"
-  },
-  {
-    "id": "camel-coffee",
-    "name": "카멜커피",
-    "category": "카페",
-    "building": "카멜커피 상도점",
-    "lat": 37.4988,
-    "lng": 126.945,
-    "seats": 0,
-    "hours": "10:00~21:00",
-    "outlets": false,
-    "groupStudy": false,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>빈티지 인테리어 카페, 대화 위주 분위기 (노트북 작업 비추천)</p>\n"
   },
   {
     "id": "cakepop-cafe",
