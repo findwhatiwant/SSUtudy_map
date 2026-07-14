@@ -23,14 +23,14 @@ SSUtudy Map
 - **스타일**: Tailwind CSS — 모바일 반응형·터치 UI 빠르게 구성
 - **지도**: 카카오맵 JS SDK (마커 클러스터러 라이브러리 사용) — 국내 데이터 정확, 무료 티어 제공
 - **상태관리**: React useState / React Callback Hook / Presenter Hook
-- **데이터**: `src/content/spaces/` 내의 개별 `.md` 마크다운 파일 (프론트매터 파싱 및 Marked 기반 HTML 변환)
+- **데이터**: [spaces.json](file:///Users/jousig/programming/SSU_study_map/src/content/spaces.json) (단일 JSON 정적 파일로 모든 공부 공간을 한곳에서 효율적으로 관리 및 컴파일)
 - **배포**: GitHub Pages (GitHub Actions를 통한 `main` 브랜치 자동 빌드 및 배포)
 - **추가**: PWA (홈 화면 추가)로 모바일 웹 사용성 향상
 
 # 시스템 구조
 
 백엔드가 없는 정적 클라이언트 단일 애플리케이션으로, 코드의 관심사 분리를 위해 MVP 디자인패턴을 지향한다.
-- **Model**: [studySpace.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpace.ts), [frontmatter.ts](file:///Users/jousig/programming/SSU_study_map/src/models/frontmatter.ts), [studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts) (데이터 구조 정의 및 마크다운 정적 파싱)
+- **Model**: [studySpace.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpace.ts), [studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts) (데이터 구조 정의 및 정적 JSON 로드)
 - **Presenter**: [useStudyMapPresenter.ts](file:///Users/jousig/programming/SSU_study_map/src/presenters/useStudyMapPresenter.ts) (동작 관리 및 로직 캡슐화)
 - **View**: [MapView.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/MapView.tsx), [StudySpaceModal.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/StudySpaceModal.tsx), [ReportSpaceModal.tsx](file:///Users/jousig/programming/SSU_study_map/src/views/ReportSpaceModal.tsx) (UI 표출)
 
@@ -61,8 +61,8 @@ SSUtudy Map
 
 # API 설계
 
-### 정적 빌드 컴파일 (Option 2) 및 런타임 페치
-- 빌드 타임에 Node.js 스크립트([compile-spaces.js](file:///Users/jousig/programming/SSU_study_map/scripts/compile-spaces.js))가 Firestore에서 승인된 스팟 데이터를 REST API로 조회하여 [spaces.json](file:///Users/jousig/programming/SSU_study_map/public/spaces.json) 파일로 컴파일합니다.
+### 정적 빌드 컴파일 및 런타임 페치
+- 빌드 타임에 Node.js 스크립트([compile-spaces.js](file:///Users/jousig/programming/SSU_study_map/scripts/compile-spaces.js))가 [spaces.json](file:///Users/jousig/programming/SSU_study_map/src/content/spaces.json) 소스 파일을 빌드하여 [spaces.json](file:///Users/jousig/programming/SSU_study_map/public/spaces.json) 에셋 파일로 컴파일합니다.
 - 런타임 클라이언트([studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts))는 이 `./spaces.json`을 단일 HTTP GET 요청으로 비동기 호출하여 로드함으로써 파이어베이스 데이터 읽기(Read) 비용을 0원으로 완벽히 예방합니다.
 
 # 일정 및 마일스톤 (개발 현황 및 해야할 일)
