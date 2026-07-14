@@ -210,21 +210,6 @@
     "bodyHtml": "<p>디저트가 맛있고 공부하기 좋은 조용하고 쾌적한 분위기</p>\n"
   },
   {
-    "id": "twosome-place-namseong",
-    "name": "투썸플레이스 남성역",
-    "category": "카페",
-    "building": "투썸플레이스 남성역점",
-    "lat": 37.4857023,
-    "lng": 126.9814732,
-    "seats": 0,
-    "hours": "08:00~23:00",
-    "outlets": true,
-    "groupStudy": true,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>신규 대형 매장, 공간 넓고 좌석 및 콘센트 풍부</p>\n"
-  },
-  {
     "id": "student-cafeteria",
     "name": "학생식당",
     "category": "기타",
