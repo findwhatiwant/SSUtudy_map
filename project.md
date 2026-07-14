@@ -195,3 +195,17 @@ SSUtudy Map
   - local 검토기([suggestions-to-md.local.js](file:///Users/jousig/programming/SSU_study_map/scripts/suggestions-to-md.local.js))가 승인 시 md 파일 대신 `src/content/spaces.json`에 데이터를 직접 추가/갱신하도록 수정.
   - [compile-spaces.js](file:///Users/jousig/programming/SSU_study_map/scripts/compile-spaces.js))에서 Firestore REST API를 호출해 spaces를 가져오는 코드 및 [studySpaceRepository.ts](file:///Users/jousig/programming/SSU_study_map/src/models/studySpaceRepository.ts)의 Firestore spaces 조회 폴백 코드를 전면 제거하여 완전한 무비용/초경량 런타임 빌드 달성.
 
+## 17. 엑셀 데이터 기반 신규 공부 공간 정보 기입 및 파이어베이스 마이그레이션
+- **배경**: 엑셀 데이터 파일인 `Book1.xlsx`의 21행 이후에 작성되어 있던 10개의 신규 공부 공간 및 카페 리스트(카멜커피, 김영삼도서관, eea café, 스타벅스, 이은스터디 카페, 빽다방, 케이크팝, 투썸플레이스 남성역, 카공족, 렝스터디 카페)의 상세 데이터(콘센트 여부, 위치, 층수, 좌석수, 운영시간 등)가 비어 있었음.
+- **해결**:
+  - 각 공부 공간의 상세 주소 및 운영 정보, 카공/노트북 적합 여부를 전수 조사하여 `Book1.xlsx`의 21행 이후 빈칸에 알맞은 데이터를 정확히 채워 넣어 엑셀 데이터를 정상화함.
+  - 조사된 주소를 바탕으로 위도/경도를 정확하게 가공한 후, Firestore 컬렉션 스키마 규격으로 매핑하는 마이그레이션 스크립트([insert-suggestions.local.js](file:///Users/jousig/programming/SSU_study_map/scripts/insert-suggestions.local.js))를 작성 및 실행함.
+  - 총 10개의 신규 장소에 대한 제보 데이터를 Firestore `suggestions` 컬렉션 내에 `pending` 상태의 문서로 정상 적재 완료하여, 향후 관리자가 로컬 검토기로 검증 후 spaces 정적 파일에 일괄 배포할 수 있는 구조를 확립함.
+
+## 18. 파이어베이스 제보 데이터 검토 승인 및 공부 공간 핀 필터링 최적화 반영
+- **배경**: Firestore `suggestions` 대기 컬렉션에 적재되어 있던 11건의 제보 데이터와 기존에 등록된 제보 건들을 통합 검토하여, 학생들에게 실제 유용한 숭실대 인근 및 교내 공간 위주로 핀 정보를 최적화하여 갱신할 필요가 있었음.
+- **해결**:
+  - 교내 핵심 스터디 스팟인 `미래관 1층`, `전산관 1층`, `조만식기념관 2층`, `진리관 각층`, `숭덕경상관 2층, 3층`, `조만식 기념관 3층`, `숭실포레스트`, `교수학습혁신센터`, `진로취업센터`, `기계창` 총 10곳을 최종 승인하여 [spaces.json](file:///Users/jousig/programming/SSU_study_map/src/content/spaces.json) 정적 데이터 소스에 추가함.
+  - 테스트용 데이터(`테스트 공간`)를 포함해 숭실대 캠퍼스에서 너무 멀거나(예: 노량진 `렝스터디 카페`, 남성역 `투썸플레이스`, 상도동 `김영삼도서관` 등) 실사용에 적합하지 않은 공간(예: 공간이 협소한 `빽다방`, 중복 항목 등) 총 7건은 맵 정보의 신뢰도 유지를 위해 제외 및 반려 처리함.
+  - 승인 처리가 완료된 뒤 파이어베이스 데이터베이스 정리와 요금 방지를 위해 Firestore `suggestions` 컬렉션 내 문서들을 일괄 삭제 완료함.
+  - `npm run compile` 및 빌드를 통해 최종 17곳의 유효 공부 공간으로 정제된 최신 버전을 깃허브 Pages에 최종 푸시 및 배포 완료.
