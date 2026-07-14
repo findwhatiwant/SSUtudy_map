@@ -255,21 +255,6 @@
     "description": "매장이 협소하여 장시간 카공 비추천"
   },
   {
-    "id": "lang-study-cafe",
-    "name": "렝스터디 카페",
-    "category": "열람실",
-    "building": "랭스터디카페 노량진점",
-    "lat": 37.512836,
-    "lng": 126.9543823,
-    "seats": 200,
-    "hours": "00:00~24:00",
-    "outlets": true,
-    "groupStudy": true,
-    "status": "open",
-    "statusNote": "",
-    "description": "24시간 연중무휴 스터디카페, 대화 가능한 카페형 학습 공간"
-  },
-  {
     "id": "eea-cafe",
     "name": "eea café",
     "category": "카페",

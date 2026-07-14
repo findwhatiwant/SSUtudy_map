@@ -45,21 +45,6 @@
     "bodyHtml": "<p>매주 월요일 및 법정공휴일 휴관, 동작구통합도서관 예약 가능</p>\n"
   },
   {
-    "id": "lang-study-cafe",
-    "name": "렝스터디 카페",
-    "category": "열람실",
-    "building": "랭스터디카페 노량진점",
-    "lat": 37.512836,
-    "lng": 126.9543823,
-    "seats": 200,
-    "hours": "00:00~24:00",
-    "outlets": true,
-    "groupStudy": true,
-    "status": "open",
-    "statusNote": "",
-    "bodyHtml": "<p>24시간 연중무휴 스터디카페, 대화 가능한 카페형 학습 공간</p>\n"
-  },
-  {
     "id": "mirae-hall-1f",
     "name": "미래관 1층",
     "category": "열람실",
